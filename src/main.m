@@ -1,5 +1,5 @@
 GenerateVectorField('../images/Hawk.bmp');
 
-FindCandidates();
-
-RotatedGaussian();
+% FindCandidates();
+% 
+% RotatedGaussian();

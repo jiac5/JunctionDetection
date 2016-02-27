@@ -20,15 +20,15 @@ function confidences = GenerateVectorField(image_path)
     v{5} = [1 1] / sqrt(2);
     field(1:end-1, 2:end, 6) = A(2:end, 1:end-1) - A(1:end-1, 2:end); 
     v{6} = [1 -1] / sqrt(2);
+
     field(2:end, 1:end-1, 7) = A(1:end-1, 2:end) - A(2:end, 1:end-1); 
     v{7} = [-1 1] / sqrt(2);
     field(2:end, 2:end, 8) = A(1:end-1, 1:end-1) - A(2:end, 2:end); 
     v{8} = [-1 -1] / sqrt(2);
 
-    field = field(2:end-1, 2:end-1, :);
-%     s = [0 0]';
+    s = [0 0]';
 
-    
+    field = field(2:end-1, 2:end-1, :);
 
     % field = abs(field);
 
@@ -67,7 +67,7 @@ function confidences = GenerateVectorField(image_path)
                 end
             end
 
-            if image(i+1, j+1) < 0.1
+            if img(i+1, j+1) < 0.1
                 confidence = 0.0;
             end
 
@@ -76,7 +76,9 @@ function confidences = GenerateVectorField(image_path)
 
             x(i * (h-2) + j) = j;
             y(i * (h-2) + j) = i;
+
             dx(i * (h-2) + j) = U(2, 2) * confidence;
+
             dy(i * (h-2) + j) = -U(1, 2) * confidence;
 
             if dx(i * (h-2) + j) < 0 
