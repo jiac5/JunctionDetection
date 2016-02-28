@@ -1,9 +1,7 @@
-function RotatedGaussian()
-
-    img = imread('F:\Hawk.bmp');
-    if size(img, 3) == 3
-        img = rgb2gray(img);
-    end
+function RotatedGaussian(candidates, image_path)
+    img = candidates;
+    
+    
 
     % img = imresize(img, 8);
     [h w] = size(img);
@@ -18,9 +16,8 @@ function RotatedGaussian()
     for i = 1 : 12
 
         Theta = pi / 12 * i; 
-        size = gaussian_size;
-        x0 = size/2; y0 = size/2;
-        [x,y] = meshgrid(1:size,1:size);
+        x0 = gaussian_size/2; y0 = gaussian_size/2;
+        [x,y] = meshgrid(1:gaussian_size,1:gaussian_size);
         x2 = cos(Theta)*(x-x0)-sin(Theta)*(y-y0)+x0;
         y2 = sin(Theta)*(x-x0)+cos(Theta)*(x-x0)+y0;
         z2 = (exp(-((x2-x0)/1.5).^2).*(exp(-((y2-y0)/3).^2)));
@@ -66,7 +63,7 @@ function RotatedGaussian()
                 count = count + 1;
 
                 x(count) = j;
-                y(count) = i;
+                y(count) = i - 5;
                 dx(count) = sin(direction(i, j));
                 dy(count) = cos(direction(i, j));
             end
@@ -74,9 +71,9 @@ function RotatedGaussian()
     end
 
     figure;
-    originalImage = imread('F:\Hawk.bmp');
-    imshow(originalImage); hold on;
-    q = quiver(x, y - 15, dx, dy); hold on;
+    originalImage = imread(image_path);
+    %imshow(originalImage); hold on;
+    q = quiver(x, y, dx, dy); hold on;
     q.Color = 'blue';
     axis([0, w, 0, h + 100]); 
     title(strcat('gaussian shaped window size=', num2str(gaussian_size)));

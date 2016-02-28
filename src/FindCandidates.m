@@ -1,46 +1,44 @@
-function output = FindCandidates()
-    image_path = 'F:\Hawk.bmp';
-    A = imread(image_path);
-    if size(A, 3) == 3
-        A = rgb2gray(A);
+function candidates = FindCandidates(image_path, confidences, gaussian_size, window_size)
+    
+    image = imread(image_path);
+    if size(image, 3) == 3
+        image = rgb2gray(image);
     end
-    A = wiener2(A,[5 5]);
-    img = A;
-
+    A = wiener2(image,[5 5]);
     A = im2double(A);
     A = A(2:end-1, 2:end-1);
+    [height width] = size(A);
+    
+    
+    peak_r = [];
+    peak_c = [];
 
+    newImg = zeros(height, width);
 
-    [w h] = size(A);
-    peak_x = [];
-    peak_y = [];
+    peak_r_gaussian = [];
+    peak_c_gaussian = [];
 
-    newImg = zeros(w, h);
+    filtered = zeros(height, width);
 
-    peak_x_gaussian = [];
-    peak_y_gaussian = [];
+    window = window_size; 
+    for i = 1 + window : width - window-1
 
-    filtered = zeros(w, h);
-
-    window = 3; % 
-    for i = 1 + window : h - window-1
-
-        col = A(:, i - window);
+        col = confidences(:, i - window);
         for ww = 1 : 2 * window
-            col = col + A(:, i-window + ww );
+            col = col + confidences(:, i-window + ww );
         end
 
-        for j = 1 : w 
+        for j = 1 : height 
             if confidences(j, i) == 0
                 col(j) = 0;      
             end
         end
 
         newCol = col;
-        for j = 2 : w-1
+        for j = 2 : height-1
             if col(j) > col(j-1) && col(j) > col(j+1)
-                peak_x = [peak_x i+1];
-                peak_y = [peak_y j+1];
+                peak_c = [peak_c i+1];
+                peak_r = [peak_r j+1];
                 newImg(j, i) = A(j, i);            
                 newCol(j) = A(j, i);
             else
@@ -50,7 +48,7 @@ function output = FindCandidates()
 
         col = newCol;
 
-        gaussFilter = gausswin(7);
+        gaussFilter = gausswin(gaussian_size);
         gaussFilter = gaussFilter / sum(gaussFilter);
 
         col = conv(col, gaussFilter);
@@ -60,25 +58,23 @@ function output = FindCandidates()
         col = conv(col, gaussFilter);
         col = conv(col, gaussFilter);
 
-        for j = 2 : w-2
+        for j = 2 : height-2
             if col(j) > col(j-1) && col(j) > col(j+1)
-                peak_x_gaussian = [peak_x_gaussian i+1];
-                peak_y_gaussian = [peak_y_gaussian j+1];
+                peak_c_gaussian = [peak_c_gaussian i+1];
+                peak_r_gaussian = [peak_r_gaussian j+1];
             end
         end
     end
+% 
+%     figure;
+%     plot(peak_c_gaussian, height - peak_r_gaussian, '.'); title('After Gaussian Filtering');
+%     axis([0, width, 0, height]);
 
-    figure;
-    plot(peak_x_gaussian, w - peak_y_gaussian, '.'); title('After Gaussian Filtering');
-    axis([0, h, 0, w]);
 
-
-    [xx b] = size(peak_y_gaussian);
-    o = zeros(w, h);
+    [xx b] = size(peak_r_gaussian);
+    o = zeros(height, width);
     for i = 1 : b
-        o(peak_y_gaussian(i), peak_x_gaussian(i)) = 1;
-    end
-    imwrite(mat2gray(o), 'F:\tt.bmp');
-    
-    output = mat2gray(o);
+        o(peak_r_gaussian(i), peak_c_gaussian(i)) = 1;
+    end 
+    candidates = mat2gray(o);
 end

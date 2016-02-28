@@ -1,4 +1,4 @@
-function confidences = GenerateVectorField(image_path)
+function [x y dx dy confidences] = GenerateVectorField(image_path)
 
     image = imread(image_path);
     if size(image, 3) == 3
@@ -9,8 +9,8 @@ function confidences = GenerateVectorField(image_path)
     image = im2double(wiener2(image,[5 5]));
     A = image;
     
-    [w h] = size(A);
-    field = zeros(w, h, 8);
+    [height width] = size(A);
+    field = zeros(height, width, 8);
 
     field(1:end-1, :, 1) = A(2:end, :) - A(1:end-1, :); v{1} = [1 0];
     field(2:end, :, 2) = -A(2:end, :) + A(1:end-1, :); v{2} = [-1 0];
@@ -26,21 +26,18 @@ function confidences = GenerateVectorField(image_path)
     v{8} = [-1 -1] / sqrt(2);
 
     field = field(2:end-1, 2:end-1, :);
-%     s = [0 0]';
-
     
+    %s = [0; 0];
 
-    % field = abs(field);
+    x = zeros( (height-2) * (width-2), 1);
+    y = zeros( (height-2) * (width-2), 1);
+    dx = zeros( (height-2) * (width-2), 1);
+    dy = zeros( (height-2) * (width-2), 1);
 
-    x = zeros( (w-2) * (h-2), 1);
-    y = zeros( (w-2) * (h-2), 1);
-    dx = zeros( (w-2) * (h-2), 1);
-    dy = zeros( (w-2) * (h-2), 1);
+    confidences = zeros(height-2, width-2);
 
-    confidences = zeros(w-2, h-2);
-
-    for i = 1 : w - 2
-        for j = 1 : h - 2
+    for i = 1 : height - 2
+        for j = 1 : width - 2
             A = zeros(2, 2);
             for k = 1 : 8
                 val = field(i, j, k);
@@ -54,43 +51,33 @@ function confidences = GenerateVectorField(image_path)
 
     %         S(2,2)
             confidence = 0.0;
-            if S(1,1) > 0.0005 && S(2, 2) > 0.0005
-                confidence =  S(1, 1) / S(2, 2);
-                confidences(i, j) = 1.0/abs(confidence);
-
-                if confidence < 1.5
-    %                 confidence = 0.0;
-                else
-                    if confidence > 3.0
-                        confidence = 3.0;
-                    end
-                end
+            if S(2,2) > 0
+                confidence = S(1, 1) / S(2, 2);
+            else
+                confidence = 1;
             end
 
-            if image(i+1, j+1) < 0.1
+            x(i * (width-2) + j) = j;
+            y(i * (width-2) + j) = i;
+            
+            if image(i+1, j+1) < 0.05
                 confidence = 0.0;
             end
+            
+            confidences(i, j) = confidence;
+            
+            if confidence > 5
+                confidence = 5;
+            end
+            
+            dx(i * (width-2) + j) = U(2, 2) * confidence;
+            dy(i * (width-2) + j) = -U(1, 2) * confidence;
 
-
-            s = s + U(:, 2) * confidence;
-
-            x(i * (h-2) + j) = j;
-            y(i * (h-2) + j) = i;
-            dx(i * (h-2) + j) = U(2, 2) * confidence;
-            dy(i * (h-2) + j) = -U(1, 2) * confidence;
-
-            if dx(i * (h-2) + j) < 0 
-                dx(i * (h-2) + j) = -dx(i * (h-2) + j);
-                dy(i * (h-2) + j) = -dy(i * (h-2) + j);
+            if dx(i * (width-2) + j) < 0 
+                dx(i * (width-2) + j) = -dx(i * (width-2) + j);
+                dy(i * (width-2) + j) = -dy(i * (width-2) + j);
             end
 
         end
     end
-    figure;
-    
-    original_image = imread(image_path);
-    imshow(original_image); hold on;
-    
-    quiver(x, y, dx, dy); hold on;
-    axis([0, w, 0, h + 200]); 
 end
