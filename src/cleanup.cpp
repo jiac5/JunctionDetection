@@ -12,10 +12,14 @@ using namespace std;
 
 
 
-double type = 1;
+class Cleaner
+{
+public:
+	double type = 1;
 
-// Rabbit
-const int height = 1026, width = 1388;
+private:
+	// Rabbit
+	const static int height = 1026, width = 1388;
 
 // Hawk
 // const int height = 1395, width = 1137;
@@ -264,7 +268,7 @@ void dfs(Coordinate coord, vector<Coordinate>& path)
 	
 	int degree = getDegree(coord.Row, coord.Col);
 
-	cout << "dfs in " << coord.Row << "," << coord.Col << " with degree : " << degree << endl;
+	//cout << "dfs in " << coord.Row << "," << coord.Col << " with degree : " << degree << endl;
 	if(degree > 2) // intersection
 		return;
 
@@ -380,7 +384,7 @@ void removeTrivialSegment(vector<Coordinate>& endPoints, int threshold)
 		vector<Coordinate> path;
 		if(dfs2(pt, path, 0 ) && path.size() < threshold)
 		{
-			cout << "removing end points " << path.size() << endl;
+			//cout << "removing end points " << path.size() << endl;
 			RemovePath(path, 0);
 		}
 	}
@@ -544,7 +548,8 @@ void mergeNearEndPoints(vector<Coordinate>& endPoints)
 	}
 }
 
-int main()
+public:
+int clean()
 {
     string fileName = "negative.mat";
     string outputFileName = "out_negative.mat";
@@ -619,6 +624,10 @@ int main()
 	return 0;
 }
 
+};
+
+
+
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, 
   const mxArray *prhs[])
 {
@@ -628,7 +637,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs,
         cout << "1:positive   2: negative" << endl;
         return;
     }
-    
-    type = *mxGetPr(prhs[0]);
-    main();
+
+    Cleaner cleaner;
+    cleaner.type = *mxGetPr(prhs[0]);
+    cleaner.clean();
 }

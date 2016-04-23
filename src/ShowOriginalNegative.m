@@ -1,9 +1,4 @@
-function shown_image = ShowOriginalNegative(image_path)
-
-original_image = imread(image_path);
-
-
-negative = load('out_negative.mat', '-ascii');
+function shown_image = ShowOriginalNegative(original_image, negative)
 
 [h w c] = size(negative);
 shown_image = zeros(h, w, 3, 'uint8');

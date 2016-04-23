@@ -1,7 +1,4 @@
-function shown_image = ShowPositiveNegative()
-
-positive = load('out_positive.mat', '-ascii');
-negative = load('out_negative.mat', '-ascii');
+function shown_image = ShowPositiveNegative(positive, negative)
 
 [h w] = size(positive);
 
