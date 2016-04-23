@@ -4,7 +4,7 @@ mex RefineNegativeUsingPositive.cpp;
 % Parameters
 image_path = '../images/Rabbit.bmp';
 
-for imageID = 1 : 45
+for imageID = 1 : 1 %45
     image_path = strcat('../images/Rabbit/', num2str(imageID), '.bmp');
     positive_row_ignore_threshold = 20;
     positive_binary_ratio_threshold = 0.8;
@@ -21,7 +21,7 @@ for imageID = 1 : 45
     % Step 1. Convert into binary image
     positive = Binary(original_image, positive_row_ignore_threshold, positive_binary_ratio_threshold, 255, 0);
     negative = Binary(original_image, negative_row_ignore_threshold, negative_binary_ratio_threshold, 0, 255);
-
+    
     % Step 2. Generate skeletons for both positive and negative
     positive = Thin(positive);
     negative = Thin(negative);
