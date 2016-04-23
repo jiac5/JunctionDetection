@@ -582,23 +582,29 @@ int clean()
         intersectionsCount = intersections.size();
     }
 
-    while(true)
+    if(type == 2)
     {
-
-        breakIntersections(intersections);
-        findIntersectionAndEndPoints(intersections, endPoints);
-        if(intersectionsCount == intersections.size())
-            break;
-        intersectionsCount = intersections.size();
+        while(true)
+        {
+            breakIntersections(intersections);
+            findIntersectionAndEndPoints(intersections, endPoints);
+            if(intersectionsCount == intersections.size())
+                break;
+            intersectionsCount = intersections.size();
+        }
     }
 
     removeTrivialSegment(endPoints, 6);
     findIntersectionAndEndPoints(intersections, endPoints);
 
-    while(intersections.size() > 0)
-    {	
-        removeIntersection(intersections);
-        findIntersectionAndEndPoints(intersections, endPoints);
+    
+    if(type == 2)
+    {
+        while(intersections.size() > 0)
+        {	
+            removeIntersection(intersections);
+            findIntersectionAndEndPoints(intersections, endPoints);
+        }
     }
 
     removeTrivialSegment(endPoints, 15);
