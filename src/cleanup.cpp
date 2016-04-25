@@ -6,6 +6,7 @@
 #include <math.h>
 #include <limits> 
 
+#include "common.h"
 #include "mex.h"
 using namespace std;
 
@@ -18,14 +19,7 @@ public:
 	double type = 1;
 
 private:
-	// Rabbit
-	const static int height = 1026, width = 1388;
-
-// Hawk
-// const int height = 1395, width = 1137;
-
-
-int map[height][width];
+int map[HEIGHT][WIDTH];
 
 struct Coordinate
 {
@@ -48,9 +42,9 @@ void readMat(string fileName)
 	fp = fopen(fileName.c_str(), "r");
 
 
-	for(int i=0; i < height; i++)
+	for(int i=0; i < HEIGHT; i++)
 	{	
-		for(int j=0; j<width; j++)
+		for(int j=0; j<WIDTH; j++)
 		{
 			int num;
 			fscanf(fp, "%d,", &num);
@@ -65,12 +59,12 @@ void readMat(string fileName)
 void writeMat(string fileName)
 {
 	ofstream fout(fileName.c_str());
-	for(int i=0; i < height; i++)
+	for(int i=0; i < HEIGHT; i++)
 	{	
-		for(int j=0; j<width; j++)
+		for(int j=0; j<WIDTH; j++)
 		{
 			fout << map[i][j];
-			if(j != width - 1)
+			if(j != WIDTH - 1)
 				fout << ",";
 		}
 		fout << endl;
@@ -116,8 +110,8 @@ void findIntersectionAndEndPoints(vector<Coordinate>& intersections, vector<Coor
 	intersections.clear();
 	endPoints.clear();
 
-	for(int i=0; i<height; i++)
-	for(int j=0; j<width; j++)
+	for(int i=0; i<HEIGHT; i++)
+	for(int j=0; j<WIDTH; j++)
 	{
 		if(map[i][j] < 1)
 			continue;
@@ -176,7 +170,7 @@ void removeShortBranch(int length, vector<Coordinate>& endPoints, vector<Coordin
 				{
 					if(i == r && j == c)
 						continue;
-					if(i < 0 || i >= height || j < 0 || j >= width)
+					if(i < 0 || i >= HEIGHT || j < 0 || j >= WIDTH)
 						continue;
 
 					Coordinate coord(i, j);
@@ -282,7 +276,7 @@ void dfs(Coordinate coord, vector<Coordinate>& path)
 		{
 
 			//cout << i << " " << j << endl;
-			if(i<0 || i>=height || j<0 || j>=width)
+			if(i<0 || i>=HEIGHT || j<0 || j>=WIDTH)
 				continue;
 
 			if(i == r && j == c)
@@ -317,7 +311,7 @@ void breakIntersections(vector<Coordinate>& intersections)
 		for(int i = r-1; i <= r+1; i++)
 		for(int j= c-1; j <= c+1; j++)
 		{
-			if(i<0 || i>=height || j<0 || j>=width)
+			if(i<0 || i>=HEIGHT || j<0 || j>=WIDTH)
 				continue;
 
 			if(i == r && j == c)
@@ -354,7 +348,7 @@ bool dfs2(Coordinate coord, vector<Coordinate>& path, int depth )
 		{
 
 			//cout << i << " " << j << endl;
-			if(i<0 || i>=height || j<0 || j>=width)
+			if(i<0 || i>=HEIGHT || j<0 || j>=WIDTH)
 				continue;
 
 			if(i == r && j == c)
@@ -401,7 +395,7 @@ void dfs_for_remove_intersection(const Coordinate& current, int depth, vector<Co
 	for(int i=r-1; i <= r+1; i++)
 		for(int j=c-1; j<=c+1; j++)
 		{
-			if(i<0 || i>=height || j<0 || j>=width)
+			if(i<0 || i>=HEIGHT || j<0 || j>=WIDTH)
 				continue;
 
 			if(i == r && j == c)
@@ -447,7 +441,7 @@ void removeIntersection(const vector<Coordinate>& intersections)
 		{
 
 			//cout << i << " " << j << endl;
-			if(i<0 || i>=height || j<0 || j>=width)
+			if(i<0 || i>=HEIGHT || j<0 || j>=WIDTH)
 				continue;
 
 			if(i == r && j == c)

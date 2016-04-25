@@ -5,7 +5,7 @@
 #include <vector>
 #include <math.h>
 #include <limits> 
-
+#include "common.h"
 #include "mex.h"
 using namespace std;
 
@@ -18,9 +18,7 @@ enum Type
 class Magic
 {
 private:
-	// Rabbit
-	const static int height = 1026, width = 1388;
-	int map[height][width];
+	int map[HEIGHT][WIDTH];
 
 
 void readMat(string fileName, Type type)
@@ -31,9 +29,9 @@ void readMat(string fileName, Type type)
 	fp = fopen(fileName.c_str(), "r");
 
 
-	for(int i=0; i < height; i++)
+	for(int i=0; i < HEIGHT; i++)
 	{	
-		for(int j=0; j<width; j++)
+		for(int j=0; j<WIDTH; j++)
 		{
 			int num;
 			fscanf(fp, "%d,", &num);
@@ -51,12 +49,12 @@ void readMat(string fileName, Type type)
 void writeMat(string fileName)
 {
 	ofstream fout(fileName.c_str());
-	for(int i=0; i < height; i++)
+	for(int i=0; i < HEIGHT; i++)
 	{	
-		for(int j=0; j<width; j++)
+		for(int j=0; j<WIDTH; j++)
 		{
 			fout << (map[i][j] == -1 ? 1 : 0);
-			if(j != width - 1)
+			if(j != WIDTH - 1)
 				fout << ",";
 		}
 		fout << endl;
@@ -93,9 +91,9 @@ int get_num_positive_vertical_neighbors(int row, int col)
 
 	r = row + 1;
     
-    while(r < height && map[r][col] == -1)
+    while(r < HEIGHT && map[r][col] == -1)
         r++;
-	while(r < height)
+	while(r < HEIGHT)
 	{
 		if(map[r][col] != 0)
 		{
@@ -106,7 +104,7 @@ int get_num_positive_vertical_neighbors(int row, int col)
 		r++;
 	}
 
-	if(r == height)
+	if(r == HEIGHT)
 		ret++;
 
 	return ret;
@@ -116,15 +114,15 @@ void dfs(int row, int col, bool* visited, int& count)
 {
 	if( get_num_positive_vertical_neighbors(row, col) == 2)
 		count++; 
-	visited[row*width + col] = true;
+	visited[row*WIDTH + col] = true;
 	for(int i=row-1; i <= row +1; i++)
 		for(int j=col-1; j<=col+1; j++)
 		{
-			if(i<0 || i >= height) 	continue;
-			if(j<0 || j >= width)	continue;
+			if(i<0 || i >= HEIGHT) 	continue;
+			if(j<0 || j >= WIDTH)	continue;
 			if(map[i][j] != -1)
 				continue;
-			if(visited[i * width + j])
+			if(visited[i * WIDTH + j])
 				continue;
 
 			dfs(i, j, visited, count);
@@ -139,8 +137,8 @@ void removedfs(int row, int col)
 	for(int i=row-1; i <= row +1; i++)
 		for(int j=col-1; j<=col+1; j++)
 		{
-			if(i<0 || i >= height) 	continue;
-			if(j<0 || j >= width)	continue;
+			if(i<0 || i >= HEIGHT) 	continue;
+			if(j<0 || j >= WIDTH)	continue;
 			if(map[i][j] != -1)
 				continue;
 			removedfs(i, j);
@@ -152,12 +150,12 @@ public:
 	{
 		cout << "Magic starts" << endl;
         
-        bool* visited = new bool[height * width];
+        bool* visited = new bool[HEIGHT * WIDTH];
         
-        for(int i=0; i<height; i++)
-			for(int j=0; j<width; j++)
+        for(int i=0; i<HEIGHT; i++)
+			for(int j=0; j<WIDTH; j++)
             {
-                visited[i*width + j] = false;
+                visited[i*WIDTH + j] = false;
                 map[i][j] = 0;
             }
 		
@@ -165,10 +163,10 @@ public:
 		readMat("out_negative.mat", Type::negative);
 
 		
-		for(int i=0; i<height; i++)
-			for(int j=0; j<width; j++)
+		for(int i=0; i<HEIGHT; i++)
+			for(int j=0; j<WIDTH; j++)
 			{
-                if(visited[i * width + j])
+                if(visited[i * WIDTH + j])
                     continue;
                 
                 if(map[i][j] != -1)
@@ -189,7 +187,7 @@ public:
 			}
 		
 
-		writeMat("final.mat");
+		writeMat("out_negative_step4.mat");
 	}
 };
 

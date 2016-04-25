@@ -1,8 +1,6 @@
 mex cleanup.cpp;
 mex RefineNegativeUsingPositive.cpp;
-
-% Parameters
-image_path = '../images/Rabbit.bmp';
+mex LinkNearEndpoints.cpp;
 
 for imageID = 1 : 1 %45
     image_path = strcat('../images/Rabbit/', num2str(imageID), '.bmp');
@@ -48,12 +46,27 @@ for imageID = 1 : 1 %45
     % Step 4. Refine negative using positive
     RefineNegativeUsingPositive();
 
-    negative = load('final.mat', '-ascii');
-    fig = ShowPositiveNegative(positive, negative);
+    negative_step4 = load('out_negative_step4.mat', '-ascii');
+    fig = ShowPositiveNegative(positive, negative_step4);
     imwrite(fig, strcat('../images/Positive_Negative/after_', num2str(imageID), '.bmp'));
     close;
     
-    fig = ShowOriginalNegative(original_image, negative);
+    fig = ShowOriginalNegative(original_image, negative_step4);
     imwrite(fig, strcat('../images/Original_Negative/after_', num2str(imageID), '.bmp'));
     close;
+    
+    
+    % Step 5. Link end points which are near each other, without pixels
+    % blocking them
+    LinkNearEndpoints();
+    
+    negative_step5 = load('out_negative_step5.mat', '-ascii');
+    positive_step5 = load('out_positive_step5.mat', '-ascii');
+    fig = ShowOriginalNegative(original_image, negative_step5);
+    imwrite(fig, strcat('../images/Final/Original_Negative_', num2str(imageID), '.bmp'));
+    close;
+    fig = ShowPositiveNegative(positive_step5, negative_step5);
+    imwrite(fig, strcat('../images/Final/Positive_Negative_', num2str(imageID), '.bmp'));
+    close;
+    
 end 
