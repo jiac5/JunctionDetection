@@ -16,11 +16,6 @@
 #endif
 using namespace std;
 
-
-enum Type
-{
-	positive, negative
-};
 class Linker
 {
 private:

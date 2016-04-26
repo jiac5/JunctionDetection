@@ -1,7 +1,7 @@
 mex cleanup.cpp;
 mex RefineNegativeUsingPositive.cpp;
 mex LinkNearEndpoints.cpp;
-
+mex RemoveHolesInPositive.cpp;
 for imageID = 1 : 1 %45
     image_path = strcat('../images/Rabbit/', num2str(imageID), '.bmp');
     positive_row_ignore_threshold = 20;
@@ -68,5 +68,23 @@ for imageID = 1 : 1 %45
     fig = ShowPositiveNegative(positive_step5, negative_step5);
     imwrite(fig, strcat('../images/Final/Positive_Negative_', num2str(imageID), '.bmp'));
     close;
+    
+    
+    % Step 6. Remove holes in positive space
+    RemoveHolesInPositive();
+    
+    negative_step6 = load('out_negative_step6.mat', '-ascii');
+    positive_step6 = load('out_positive_step6.mat', '-ascii');
+    positive_step6 = bwmorph(positive_step6, 'thin', 50);
+    fig = ShowOriginalNegative(original_image, negative_step6);
+    imwrite(fig, strcat('../images/Final/Original_Negative_', num2str(imageID), '.bmp'));
+    close;
+    fig = ShowPositiveNegative(positive_step6, negative_step6);
+    imwrite(fig, strcat('../images/Final/Positive_Negative_', num2str(imageID), '.bmp'));
+    close;
+    
+    
+    ShowAll(original_image, negative_step6, positive_step6);
+    
     
 end 
